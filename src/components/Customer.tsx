@@ -1,4 +1,4 @@
-  import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
   import { addDoc, collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
   import { db } from './Firebase';
 
@@ -21,6 +21,55 @@
     const [customers, setCustomers] = useState([]);
     const [editCustomerId, setEditCustomerId] = useState(null);
 
+
+
+//the loan part
+const [loanData, setLoanData] = useState({
+
+  loanId: '',
+  customerId: '',
+  
+});
+const [loans, setLoans] = useState([]);
+const [editLoanId, setEditLoanId] = useState(null);
+
+
+
+
+
+
+
+const [repaymentData, setRepaymentData] = useState({
+ 
+  loanId: '',
+  customerId: '',
+ 
+});
+const [repayments, setRepayments] = useState([]);
+const [editRepaymentId, setEditRepaymentId] = useState(null);
+
+
+
+
+const [loanData2, setLoanData2] = useState({
+  loanId: '',
+ // Add overdueDays to loan data
+});
+const [loans2, setLoans2] = useState([]);
+const [editLoanId2, setEditLoanId2] = useState(null);
+
+
+//til here
+
+
+
+
+
+
+
+
+
+
     const [filter, setFilter] = useState({
       loanId: '',
       repaymentId: '',
@@ -31,6 +80,9 @@
     const handleChange = (e) => {
       const { name, value } = e.target;
       setCustomerData({ ...customerData, [name]: value });
+      setLoanData({ ...loanData, [name]: value });
+      setRepaymentData({ ...repaymentData, [name]: value });
+      setLoanData2({ ...loanData2, [name]: value });
     };
 
     // Handle form submission for adding or updating a customer
@@ -39,11 +91,20 @@
       try {
         if (isEditing) {
           const customerRef = doc(db, "customer", editCustomerId);
+          const loanRef = doc(db, "loan", editLoanId);
+          const repaymentRef = doc(db, "repayments", editRepaymentId);
+          const loanRef2 = doc(db, "loanstatus", editLoanId2);
    
           await updateDoc(customerRef, customerData);
+          await updateDoc(loanRef, loanData);
+          await updateDoc(repaymentRef, repaymentData);
+          await updateDoc(loanRef2, loanData2);
           alert("Customer updated successfully!");
         } else {
           await addDoc(collection(db, "customer"), customerData);
+          await addDoc(collection(db, "loan"), loanData);
+          await addDoc(collection(db, "repayments"), repaymentData);
+          await addDoc(collection(db, "loanstatus"), loanData2);
           alert("Customer added successfully!");
         }
         setShowPopup(false);
@@ -59,6 +120,32 @@
           amountPaid: '',
           remainingBalance: ''
         });
+
+        setLoanData({
+         
+          loanId: '',
+          customerId: '',
+       
+        });
+
+
+
+        setRepaymentData({
+         
+          loanId: '',
+          customerId: '',
+         
+        });
+
+
+        setLoanData2({
+          loanId: '',
+     
+
+        });
+
+
+
         fetchCustomers();
       } catch (error) {
         console.error("Error saving document: ", error);
@@ -135,7 +222,7 @@
     return (
       <div className='flex flex-col items-center w-full p-4'>
         <div className='flex flex-row justify-between w-full max-w-4xl'>
-          <h1 className='text-brown text-2xl font-bold'>Loans</h1>
+          <h1 className='text-brown text-2xl font-bold'>Customers</h1>
           <div className='flex space-x-2'>
             <button 
               className='bg-brown text-white rounded-lg w-40 py-2' 
@@ -272,10 +359,10 @@
               <h2 className="text-xl font-bold mb-4">Filter Customers</h2>
               <form>
                 <input 
-                  type="text" 
+                  type="number" 
                   name="loanId" 
                   placeholder="Loan ID" 
-                  value={filter.loanId} 
+                  value={filter.customerId} 
                   onChange={handleFilterChange} 
                   className="border p-2 w-full mb-2" 
                 />
